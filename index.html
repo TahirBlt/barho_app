@@ -4,42 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dateneingabe</title>
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Manifest für PWA -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="icon.png">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
 
-    <!-- Apple PWA Meta-Tags -->
-    <meta name="apple-mobile-web-app-title" content="Dateneingabe">
+    <!-- PWA Meta-Tags -->
+    <meta name="theme-color" content="#c8102e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon.png">
-
-    <!-- Theme-Farbe für PWA -->
-    <meta name="theme-color" content="#c8102e">
+    <meta name="apple-mobile-web-app-title" content="Dateneingabe">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+    
+    <!-- Service Worker registrieren -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker registriert'))
+            .catch(error => console.error('Service Worker Registrierung fehlgeschlagen:', error));
+        }
+    </script>
 </head>
 <body class="bg-[#000000] text-white flex items-center justify-center h-screen">
 
     <div class="bg-white p-8 rounded-lg shadow-lg w-96 text-gray-900">
         <div class="flex justify-center mb-4">
-            <img src="https://static.wixstatic.com/media/88e7e3_88a481492d4f4753ae9fb0dcf968c8d1~mv2.png/v1/fill/w_285,h_68,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/88e7e3_88a481492d4f4753ae9fb0dcf968c8d1~mv2.png" 
-                 alt="Firmenlogo" class="h-20">
+            <!-- Logo von der Website -->
+            <img src="https://static.wixstatic.com/media/88e7e3_88a481492d4f4753ae9fb0dcf968c8d1~mv2.png/v1/fill/w_285,h_68,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/88e7e3_88a481492d4f4753ae9fb0dcf968c8d1~mv2.png" alt="Firmenlogo" class="h-20">
         </div>
 
         <h1 class="text-2xl font-bold text-center mb-6 text-[#c8102e]">BARHO Schnittgutplatz</h1>
 
         <form id="dataForm" class="space-y-4">
-            <input type="text" id="betrag" placeholder="💰 Betrag (z.B. 123,45)" 
-                class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
-            <input type="text" id="kartennummer" placeholder="💳 Kartennummer" 
-                class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
-            <input type="number" id="cm3" placeholder="📏 cm³" 
-                class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
-            <button type="submit" 
-                class="w-full bg-[#c8102e] hover:bg-[#900] text-white font-bold py-3 rounded-lg transition">💾 Speichern</button>
+            <!-- Eingabefelder für Betrag, Kartennummer und cm³ -->
+            <input type="text" id="betrag" placeholder="💰 Betrag (z.B. 123,45)" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
+            <input type="text" id="kartennummer" placeholder="💳 Kartennummer" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
+            <input type="number" id="cm3" placeholder="📏 cm³" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
+            <button type="submit" class="w-full bg-[#c8102e] hover:bg-[#900] text-white font-bold py-3 rounded-lg transition">💾 Speichern</button>
         </form>
 
         <p id="status" class="text-center mt-4 text-sm text-[#333333]"></p>
@@ -73,8 +76,14 @@
 
             const response = await fetch('http://localhost:3000/submit-data', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ betrag: betragValue, kartennummer, cm3 })
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    betrag: betragValue,
+                    kartennummer: kartennummer,
+                    cm3: cm3
+                })
             });
 
             if (response.ok) {
@@ -89,17 +98,6 @@
                 console.error(await response.text());
             }
         });
-
-        // Service Worker Registrierung für PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('service-worker.js').then(function(registration) {
-                    console.log('Service Worker registriert:', registration);
-                }).catch(function(error) {
-                    console.log('Service Worker Registrierung fehlgeschlagen:', error);
-                });
-            });
-        }
     </script>
 
 </body>
