@@ -1,9 +1,26 @@
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-            console.log('Service Worker registriert mit Erfolg:', registration);
-        }).catch(function(error) {
-            console.log('Service Worker Registrierung fehlgeschlagen:', error);
-        });
-    });
-}
+const CACHE_NAME = "dateneingabe-cache-v1";
+const urlsToCache = [
+    "/",
+    "/index.html",
+    "/manifest.json",
+    "/service-worker.js",
+    "/icon-192x192.png",
+    "/icon-512x512.png",
+    "https://cdn.tailwindcss.com"
+];
+
+self.addEventListener("install", event => {
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
+            return cache.addAll(urlsToCache);
+        })
+    );
+});
+
+self.addEventListener("fetch", event => {
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request);
+        })
+    );
+});
