@@ -2,7 +2,7 @@
     "name": "BARHO Schnittgutplatz",
     "short_name": "BARHO Schnittgutplatz",
     "description": "BARHO Schnittgutplatz",
-    "start_url": "/",
+    "start_url": "/index.html",  
     "display": "standalone",
     "background_color": "#000000",
     "theme_color": "#c8102e",
