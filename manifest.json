@@ -3,7 +3,7 @@
   "short_name": "PWA",
   "description": "Eine tolle Progressive Web App!",
   "start_url": "/",
-  "display": "standalone",  // Achte darauf, dass dies auf 'standalone' gesetzt ist
+  "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#c8102e",
   "icons": [
