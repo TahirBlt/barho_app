@@ -1,25 +1,20 @@
-const CACHE_NAME = "dateneingabe-cache-v1";
-const urlsToCache = [
-    "/",
-    "/index.html",
-    "/manifest.json",
-    "/service-worker.js",
-    "/icon-192x192.png",
-    "/icon-512x512.png",
-    "https://cdn.tailwindcss.com"
-];
-
-self.addEventListener("install", event => {
+self.addEventListener('install', function(event) {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            return cache.addAll(urlsToCache);
+        caches.open('dateneingabe-cache').then(function(cache) {
+            return cache.addAll([
+                '/',
+                '/index.html',
+                '/manifest.json',
+                '/icon.png',
+                'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css'
+            ]);
         })
     );
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener('fetch', function(event) {
     event.respondWith(
-        caches.match(event.request).then(response => {
+        caches.match(event.request).then(function(response) {
             return response || fetch(event.request);
         })
     );
