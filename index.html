@@ -1,124 +1,87 @@
 <!DOCTYPE html>
- <html lang="de">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Dateneingabe</title>
- 
-     <!-- Manifest und Icons -->
-     <link rel="manifest" href="/manifest.json">
-     <link rel="icon" href="icon.png">
- 
-     
-     <!-- Apple Meta Tags für iOS -->
-     <meta name="apple-mobile-web-app-title" content="Dateneingabe">
-     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-     <link rel="apple-touch-icon" href="icon.png">
- 
-     <!-- Web App Meta Tags -->
-     <meta name="mobile-web-app-capable" content="yes">
-     <meta name="theme-color" content="#c8102e"> <!-- Setzt die Farbe der Statusleiste -->
- 
-     <!-- Verhindert die Anzeige der Safari-Leiste -->
-     <meta name="display" content="fullscreen"> <!-- App im Standalone-Modus, ohne Browser-UI -->
-     <meta name="mobile-web-app-capable" content="yes">
-     <meta name="theme-color" content="#c8102e">
- 
-     <!-- Tailwind CSS -->
-     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
- </head>
- <body class="bg-black text-white flex items-center justify-center h-screen">
- 
-     <div class="bg-white p-8 rounded-lg shadow-lg w-96 text-gray-900">
-         <div class="flex justify-center mb-4">
-             <!-- Logo von der Website -->
-             <img src="icon.png" alt="Firmenlogo" class="h-20">
-         </div>
- 
-         <h1 class="text-2xl font-bold text-center mb-6 text-[#c8102e]">BARHO Schnittgutplatz</h1>
- 
-         <form id="dataForm" class="space-y-4">
-             <!-- Eingabefelder für Betrag, Kartennummer und cm³ -->
-             <input type="text" id="betrag" placeholder="💰 Betrag (z.B. 123,45)" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
-             <input type="text" id="kartennummer" placeholder="💳 Kartennummer" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
-             <input type="number" id="cm3" placeholder="📏 cm³" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
-             <button type="submit" class="w-full bg-[#c8102e] hover:bg-[#900] text-white font-bold py-3 rounded-lg transition">💾 Speichern</button>
-         </form>
- 
-         <p id="status" class="text-center mt-4 text-sm text-[#333333]"></p>
-     </div>
- 
-     <script>
-         document.getElementById("dataForm").addEventListener("submit", async function(event) {
-             event.preventDefault();
-             let betrag = document.getElementById("betrag").value;
-             let kartennummer = document.getElementById("kartennummer").value;
-             let cm3 = document.getElementById("cm3").value;
-             let status = document.getElementById("status");
- 
-             // Statusanzeige, dass die Daten gesendet werden
-             status.textContent = "⏳ Daten werden gesendet...";
-             status.classList.add("text-yellow-600");
- 
-             // Überprüfung, ob mindestens ein Feld ausgefüllt ist
-             if (!betrag && !kartennummer && !cm3) {
-                 status.textContent = "❌ Bitte fülle mindestens ein Feld aus!";
-                 status.classList.remove("text-yellow-600");
-                 status.classList.add("text-red-600");
-                 return;
-             }
- 
-             // Überprüfung und Umwandlung der Werte, wenn der Betrag angegeben ist
-             let betragValue = betrag ? parseFloat(betrag.replace(",", ".")) : null;
-             if (betrag && isNaN(betragValue)) {
-                 status.textContent = "❌ Ungültiger Betrag!";
-                 status.classList.remove("text-yellow-600");
-                 status.classList.add("text-red-600");
-                 return;
-             }
- 
-             // Zapier Webhook URL hier einfügen
-             const webhookUrl = 'https://hooks.zapier.com/hooks/catch/21983030/2qlosnk/';
- 
-             // Senden der Daten an den Zapier Webhook
-             const response = await fetch(webhookUrl, {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'application/json'
-                 },
-                 body: JSON.stringify({
-                     betrag: betragValue,
-                     kartennummer: kartennummer,
-                     cm3: cm3
-                 }),
-                 mode: 'no-cors' // Dies erlaubt die Anfrage, ohne CORS zu überprüfen, aber du bekommst keine Antwort
-             });
- 
-             // Überprüfen, ob das Speichern erfolgreich war
-             if (response.ok) {
-                 status.textContent = "✅ Daten erfolgreich gespeichert!";
-                 status.classList.remove("text-yellow-600");
-                 status.classList.add("text-[#c8102e]");
-                 document.getElementById("dataForm").reset();
-             } else {
-                 status.textContent = "❌ Fehler beim Speichern!";
-                 status.classList.remove("text-yellow-600");
-                 status.classList.add("text-red-600");
-                 console.error(await response.text());
-             }
-         });
- 
-         // Service Worker Registrierung
-         if ('serviceWorker' in navigator) {
-             window.addEventListener('load', function() {
-                 navigator.serviceWorker.register('service-worker.js').then(function(registration) {
-                     console.log('Service Worker registriert mit Erfolg:', registration);
-                 }).catch(function(error) {
-                     console.log('Service Worker Registrierung fehlgeschlagen:', error);
-                 });
-             });
-         }
-     </script>
- 
- </body>
- </html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateneingabe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c8102e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dateneingabe">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+
+    <!-- Service Worker registrieren -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker registriert'))
+            .catch(error => console.error('Service Worker Registrierung fehlgeschlagen:', error));
+        }
+    </script>
+</head>
+<body class="bg-[#000000] text-white flex items-center justify-center h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg w-96 text-gray-900">
+        <div class="flex justify-center mb-4">
+            <img src="icon.png" alt="Firmenlogo" class="h-20">
+        </div>
+
+        <h1 class="text-2xl font-bold text-center mb-6 text-[#c8102e]">BARHO Schnittgutplatz</h1>
+
+        <form id="dataForm" class="space-y-4">
+            <input type="text" id="betrag" placeholder="💰 Betrag (z.B. 123,45)" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
+            <input type="text" id="kartennummer" placeholder="💳 Kartennummer" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
+            <input type="number" id="cm3" placeholder="📏 cm³" class="w-full p-3 rounded-lg bg-[#f4f4f4] border border-[#c8102e] focus:outline-none focus:ring-2 focus:ring-[#c8102e]">
+            <button type="submit" class="w-full bg-[#c8102e] hover:bg-[#900] text-white font-bold py-3 rounded-lg transition">💾 Speichern</button>
+        </form>
+
+        <p id="status" class="text-center mt-4 text-sm text-[#333333]"></p>
+    </div>
+
+    <script>
+        document.getElementById("dataForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let betrag = document.getElementById("betrag").value;
+            let kartennummer = document.getElementById("kartennummer").value;
+            let cm3 = document.getElementById("cm3").value;
+            let status = document.getElementById("status");
+
+            status.textContent = "⏳ Daten werden gesendet...";
+            status.classList.add("text-yellow-600");
+
+            if (!betrag && !kartennummer && !cm3) {
+                status.textContent = "❌ Bitte fülle mindestens ein Feld aus!";
+                status.classList.remove("text-yellow-600");
+                status.classList.add("text-red-600");
+                return;
+            }
+
+            let betragValue = betrag ? parseFloat(betrag.replace(",", ".")) : null;
+            if (betrag && isNaN(betragValue)) {
+                status.textContent = "❌ Ungültiger Betrag!";
+                status.classList.remove("text-yellow-600");
+                status.classList.add("text-red-600");
+                return;
+            }
+
+            const webhookUrl = 'https://hooks.zapier.com/hooks/catch/21983030/2qlosnk/';
+
+            await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ betrag: betragValue, kartennummer: kartennummer, cm3: cm3 }),
+                mode: 'no-cors'
+            });
+
+            status.textContent = "✅ Daten erfolgreich gespeichert!";
+            status.classList.remove("text-yellow-600");
+            status.classList.add("text-[#c8102e]");
+            document.getElementById("dataForm").reset();
+        });
+    </script>
+</body>
+</html>
