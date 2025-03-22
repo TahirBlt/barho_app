@@ -76,7 +76,6 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ betrag: betragValue, kartennummer: kartennummer, cm3: cm3 }),
-                mode: 'no-cors'
             });
 
             status.textContent = "✅ Daten erfolgreich gespeichert!";
